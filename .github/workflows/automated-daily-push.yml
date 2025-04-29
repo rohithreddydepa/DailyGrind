@@ -15,7 +15,7 @@ jobs:
 
       - name: Set up Git
         run: |
-          git config --global user.name "Rohith Reddy Depa"
+          git config --global user.name "RohithReddyDepa"
           git config --global user.email "rohithreddydepa@gmail.com"
 
       - name: Check if there are changes and commit
@@ -26,6 +26,6 @@ jobs:
 
       - name: Push changes
         env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN }} # Use GitHub's token to authenticate
+          GITHUB_TOKEN: ${{ secrets.TOKEN }} # Use the custom secret named TOKEN
         run: |
           git push https://github.com/rohithreddydepa/ActivityImprove.git HEAD:main
