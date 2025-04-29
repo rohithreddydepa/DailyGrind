@@ -12,8 +12,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+        # No token parameter needed for basic checkout
         with:
-          token: ${{ secrets.TOKEN }} # Use your custom token for checkout
           fetch-depth: 0 # Fetch all history for proper pushing
 
       - name: Set up Git
@@ -30,9 +30,11 @@ jobs:
           if [[ -n "$(git status --porcelain)" ]]; then
             git add daily-update.txt
             git commit -m "Automated update on $(date)"
-            # Using the token from checkout step for pushing
-            git push origin main
+            # Use the GITHUB_TOKEN for authentication
+            git push https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git HEAD:main
             echo "Changes pushed successfully"
           else
             echo "No changes to commit"
           fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
