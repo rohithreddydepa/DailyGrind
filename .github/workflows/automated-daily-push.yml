@@ -1,0 +1,31 @@
+name: Automated Daily Push
+
+on:
+  schedule:
+    - cron: "0 */6 * * *" # Runs every 6 hours
+  workflow_dispatch: # Allows manual trigger
+
+jobs:
+  push_changes:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Git
+        run: |
+          git config --global user.name "Rohith Reddy Depa"
+          git config --global user.email "rohithreddydepa@gmail.com"
+
+      - name: Check if there are changes and commit
+        run: |
+          echo "Last updated: $(date)" >> daily-update.txt
+          git add daily-update.txt
+          git diff --cached --quiet || git commit -m "Automated update"
+
+      - name: Push changes
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }} # Use GitHub's token to authenticate
+        run: |
+          git push https://github.com/${{ github.repository }} HEAD:main
