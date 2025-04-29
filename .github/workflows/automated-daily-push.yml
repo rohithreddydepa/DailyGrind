@@ -5,30 +5,28 @@ on:
     - cron: "0 */6 * * *" # Runs every 6 hours
   workflow_dispatch: # Allows manual trigger
 
+permissions:
+  contents: write # Explicitly grant write permission to repository contents
+
 jobs:
   push_changes:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+        uses: actions/checkout@v3
 
       - name: Set up Git
         run: |
           git config --global user.name "Rohith Reddy Depa"
           git config --global user.email "rohithreddydepa@gmail.com"
 
-      - name: Update file and commit
+      - name: Update daily file
         run: |
           echo "Last updated: $(date)" >> daily-update.txt
-          git add daily-update.txt
-          # Commit only if there are changes
-          git diff --cached --quiet || git commit -m "Automated update"
 
-      - name: Push changes
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Commit and push if changed
         run: |
-          git push https://x-access-token:$GITHUB_TOKEN@github.com/${{ github.repository }}.git HEAD:main
+          git add daily-update.txt
+          git diff --quiet && git diff --staged --quiet || git commit -m "Automated update on $(date)"
+          git push
