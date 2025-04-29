@@ -28,4 +28,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN }} # Use GitHub's token to authenticate
         run: |
-          git push https://github.com/${{ github.repository }} HEAD:main
+          git push https://github.com/rohithreddydepa/ActivityImprove.git HEAD:main
