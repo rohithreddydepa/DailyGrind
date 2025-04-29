@@ -11,21 +11,28 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.TOKEN }} # Use your custom token for checkout
+          fetch-depth: 0 # Fetch all history for proper pushing
 
       - name: Set up Git
         run: |
-          git config --global user.name "RohithReddyDepa"
+          git config --global user.name "Rohith Reddy Depa"
           git config --global user.email "rohithreddydepa@gmail.com"
 
-      - name: Check if there are changes and commit
+      - name: Update daily file
         run: |
           echo "Last updated: $(date)" >> daily-update.txt
-          git add daily-update.txt
-          git diff --cached --quiet || git commit -m "Automated update"
 
-      - name: Push changes
-        env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN }} # Use the custom secret named TOKEN
+      - name: Check for changes and commit
         run: |
-          git push https://github.com/rohithreddydepa/ActivityImprove.git HEAD:main
+          if [[ -n "$(git status --porcelain)" ]]; then
+            git add daily-update.txt
+            git commit -m "Automated update on $(date)"
+            # Using the token from checkout step for pushing
+            git push origin main
+            echo "Changes pushed successfully"
+          else
+            echo "No changes to commit"
+          fi
