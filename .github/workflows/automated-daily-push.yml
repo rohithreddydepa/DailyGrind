@@ -26,6 +26,6 @@ jobs:
 
       - name: Push changes
         env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN }} # Use the custom secret named TOKEN
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Use the custom secret named TOKEN
         run: |
           git push https://github.com/rohithreddydepa/ActivityImprove.git HEAD:main
