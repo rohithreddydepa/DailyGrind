@@ -11,30 +11,24 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
-        # No token parameter needed for basic checkout
+        uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Fetch all history for proper pushing
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up Git
         run: |
           git config --global user.name "Rohith Reddy Depa"
           git config --global user.email "rohithreddydepa@gmail.com"
 
-      - name: Update daily file
+      - name: Update file and commit
         run: |
           echo "Last updated: $(date)" >> daily-update.txt
+          git add daily-update.txt
+          # Commit only if there are changes
+          git diff --cached --quiet || git commit -m "Automated update"
 
-      - name: Check for changes and commit
-        run: |
-          if [[ -n "$(git status --porcelain)" ]]; then
-            git add daily-update.txt
-            git commit -m "Automated update on $(date)"
-            # Use the GITHUB_TOKEN for authentication
-            git push https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git HEAD:main
-            echo "Changes pushed successfully"
-          else
-            echo "No changes to commit"
-          fi
+      - name: Push changes
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git push https://x-access-token:$GITHUB_TOKEN@github.com/${{ github.repository }}.git HEAD:main
